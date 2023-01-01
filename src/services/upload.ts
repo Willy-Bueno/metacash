@@ -6,17 +6,17 @@ import crypto from 'node:crypto'
 
 
 const s3 = new S3Client({
-  region: process.env.AWS_REGION,
+  region: process.env.AWS_R,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    accessKeyId: process.env.AWS_AKI as string,
+    secretAccessKey: process.env.AWS_SAK as string,
   }
 })
 
 const upload = multer({
   storage: multerS3({
     s3,
-    bucket: process.env.AWS_BUCKET as string,
+    bucket: process.env.AWS_B as string,
     acl: 'public-read',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: (req, file, cb) => {
