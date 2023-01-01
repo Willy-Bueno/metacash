@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  wallet        String         @unique
+  role          String?        @default("user")
+  pools         Pool[]
+  contributions Contribution[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  withdrawals   Withdraw[]
+
+  @@unique([id, wallet])
+  @@map("users")
+}
+
+model Contribution {
+  id           Int      @id @default(autoincrement())
+  amount       String
+  owner        User     @relation(fields: [userId, owner_wallet], references: [id, wallet])
+  owner_wallet String
+  userId       Int
+  hash_tx      String
+  pool         Pool     @relation(fields: [poolId], references: [id])
+  poolId       Int
+  createdAt    DateTime @default(now())
+
+  @@map("contributions")
+}
+
+enum PoolStatus {
+  active
+  finished
+}
+
+model Pool {
+  id            Int            @id @default(autoincrement())
+  title         String
+  address       String
+  chainId       String
+  startDate     String
+  endDate       String
+  thumbUri      String
+  thumbKey      String
+  videoUri      String?
+  owner         User           @relation(fields: [ownerId], references: [id])
+  ownerId       Int
+  goal          Int            @default(0)
+  raisedAmount  Float?         @default(0)
+  contributions Contribution[]
+  withdrawal    Withdraw?
+  status        PoolStatus     @default(active)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([ownerId], name: "ownerId")
+  @@map("pools")
+}
+
+model AppConfig {
+  id              Int      @id @default(autoincrement())
+  tax_rate        Float    @default(0.1)
+  address_default String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("app_configs")
+}
+
+enum Status {
+  pending
+  success
+  rejected
+}
+
+model Withdraw {
+  id        Int      @id @default(autoincrement())
+  amount    Float?   @default(0)
+  user      User     @relation(fields: [user_id], references: [id])
+  user_id   Int
+  hash_tx   String?
+  status    Status   @default(pending)
+  pool      Pool     @relation(fields: [pool_id], references: [id])
+  pool_id   Int      @unique
+  createdAt DateTime @default(now())
+
+  @@map("withdraw")
+}
