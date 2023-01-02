@@ -8,7 +8,7 @@ export default function Home() {
       <AboutContainer>
         <h1>Metacash</h1>
         <h4>Community-focused launchpad for the next generation crypto gems</h4>
-        <p>KrystalGO brings blockchain startups and community investors together in a cutting edge token sale platform that ensures both quality and ease of access</p>
+        <p>Metacash brings blockchain startups and community investors together in a cutting edge token sale platform that ensures both quality and ease of access</p>
       </AboutContainer>
       <TtmContainer>
         <Image src={Ttm} alt="To the moon" width={400} height={400} priority />
@@ -25,7 +25,7 @@ const HomeContainer = styled('div', {
   maxWidth: '990px',
   height: '100%',
   width: '100%',
-  marginTop: '80px',
+  marginTop: '40px',
 
   '@sm': {
     flexDirection: 'column',

@@ -152,8 +152,15 @@ export const DropdownMenu = () => {
               </>
             ): (
               <>
+                <DropdownLabel>Conta</DropdownLabel>
                 <DropdownItem onClick={login}>
                   Login
+                </DropdownItem>
+                <DropdownLabel>Navegação</DropdownLabel>
+                <DropdownItem>
+                  <Link href="/pools">
+                    Pools
+                  </Link>
                 </DropdownItem>
               </>
             )
@@ -249,6 +256,8 @@ const IconButton = styled('button', {
   color: '$white',
   backgroundColor: '$gray900',
   boxShadow: `0 2px 10px ${blackA.blackA7}`,
-  '&:hover': { backgroundColor: violet.violet3 },
+  '&:hover': { 
+    filter: 'brightness(1.1)',
+   },
   '&:focus': { boxShadow: `0 0 0 2px black` },
 });

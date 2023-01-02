@@ -100,16 +100,16 @@ const WalletButton = styled('button', {
   width: '160px',
   height: '100%',
   border: 'none',
-  borderRadius: '16px',
+  borderRadius: '4px',
   cursor: 'pointer',
-  backgroundImage: '$gradient',
+  backgroundColor: '$gray900',
   backgroundSize: '200%',
   backgroundPosition: 'right',
   transition: 'background-position 0.5s ease',
   marginLeft: 'auto',
   color: '$gray100',
   '&:hover': {
-    backgroundPosition: 'left',
+    filter: 'brightness(0.8)',
   },
 
   '@sm': {

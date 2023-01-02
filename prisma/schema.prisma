@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://glewkdwpj04m7511elot:pscale_pw_57VBVUWeQEsZrSTgkovExXZCII3xM8PrFgBaGGZuTco@us-east.connect.psdb.cloud/metacash?sslaccept=strict"
+  url      = env("DATABASE_URL")
 }
 
 model User {

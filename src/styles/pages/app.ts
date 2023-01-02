@@ -5,7 +5,7 @@ export const AppContainer = styled('div', {
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'flex-start',
-  minHeight: 'calc(100vh - 80px)',
+  minHeight: 'calc(100vh - 140px)',
   padding: '0 1.5rem',
   backgroundColor: '$gray900',
 })
