@@ -322,7 +322,7 @@ const DashboardPoolContainer = styled('div', {
   gridGap: '40px',
   width: '100%',
   padding: '0 20px',
-  marginTop: '60px',
+  margin: '60px 0',
 
   '@sm': {
     gridTemplateColumns: '1fr'

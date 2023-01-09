@@ -8,6 +8,7 @@ import { getBalance } from '@/utils/get-balance';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { SelectNetwork } from '../SelectNetwork';
+import { IoLogOutOutline } from 'react-icons/io5';
 
 export function Wallet() {
   const { asPath } = useRouter()
@@ -41,6 +42,7 @@ export function Wallet() {
   useEffect(() => {
     if(address) {
       getBalance(isAuthenticated, address, setBalance)
+      
     }
   }, [address, isAuthenticated, chainId])
 
@@ -65,6 +67,7 @@ export function Wallet() {
             }</WalletBalance>
             <WalletAddress>{truncatedAddress}</WalletAddress>
           </WalletInfoContainer>
+          <IoLogOutOutline size={24} color='#FFF' onClick={handleLogout} />
         </>
       ) : (
         <WalletButton onClick={handleLogin}>Connect wallet</WalletButton>

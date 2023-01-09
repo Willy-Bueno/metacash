@@ -27,7 +27,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if(!isAuthenticated) {
       asPath === '/pool/create' && replace('/')
     }
-  }, [isAuthenticated, asPath, replace])
+  })
 
   async function signin() {
     try {
@@ -56,14 +56,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           } else {
             throw new Error('No account selected')
           }
-        }
+        } 
       }
     } catch (error) {
       console.log(error)
     }
   }
 
-  // chainId changes when user changes network
   useEffect(() => {
     if (isAuthenticated) {
       if (window.ethereum) {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: `https://metacash.vercel.app/api`,
+  baseURL: `http://localhost:3000/api`,
   headers: {
     'Content-Type': 'multipart/form-data',
   }

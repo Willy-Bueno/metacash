@@ -14,11 +14,15 @@ export function Header() {
   const { asPath } = useRouter()
   const { width } = useWindowSize()
   const { isAuthenticated } = useAuth()
+  const regex = /\/pools\/\w+/g
+  const regexRoute = regex.test(asPath)
   
   return (
     <HeaderContainer>
         <main>
-          <Image priority src={logo} width={50} height={30} alt="logo metacash" />
+          <Link href='/'>
+            <Image priority src={logo} width={50} height={30} alt="logo metacash" />
+          </Link>
           {
             width! >= 1080 ? (
               <>
@@ -28,6 +32,9 @@ export function Header() {
                       {
                         isAuthenticated && asPath === '/pools' ? (
                           <>
+                            <Link href="/">
+                              Home
+                            </Link>
                             <Link href="/">
                               Pools
                             </Link>
@@ -40,11 +47,11 @@ export function Header() {
                             {
                               isAuthenticated && asPath === '/dashboard' ? (
                                 <>
-                                  <Link href="/pools">
-                                    Pools
-                                  </Link>
                                   <Link href="/">
                                     Home
+                                  </Link>
+                                  <Link href="/pools">
+                                    Pools
                                   </Link>
                                 </>
                               ) : (
@@ -71,13 +78,33 @@ export function Header() {
                                           Dashboard
                                         </Link>
                                       </>
+                                    ) : isAuthenticated && regexRoute ? (
+                                      <>
+                                        <Link href="/">
+                                          Home
+                                        </Link>
+                                        <Link href="/pools">
+                                          Pools
+                                        </Link>
+                                        <Link href="/dashboard">
+                                          Dashboard
+                                        </Link>
+                                      </>
                                     ) : (
                                       <>
                                         {
-                                          !isAuthenticated && (
-                                            <Link href="/pools">
-                                              Pools
-                                            </Link>
+                                          !isAuthenticated && asPath === '/' ? (
+                                            <>
+                                              <Link href="/pools">
+                                                Pools
+                                              </Link>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Link href="/">
+                                                Home
+                                              </Link>
+                                            </>
                                           )
                                         }
                                       </>
