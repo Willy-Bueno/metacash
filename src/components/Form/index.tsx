@@ -4,6 +4,8 @@ import { Upload } from '../upload'
 
 import axios from '@/helper/axios'
 import { useAuth } from '@/hooks';
+import { useRouter } from 'next/router';
+import { IPool } from '@/interfaces/db-interfaces';
 
 interface File extends Blob {
   readonly lastModified: number;
@@ -30,6 +32,7 @@ interface FileUploaded {
 
 export function Form() {
   const { address: wallet, chainId } = useAuth()
+  const { replace } = useRouter()
 
   const [step, setStep] = useState(0)
   const [title, setTitle] = useState('')
@@ -161,7 +164,7 @@ export function Form() {
       formData.set('thumb', file.file! || null)
       formData.set('chainId', chainId!.toString())
 
-      await axios.post('/pool/create', formData, {
+      const pool: IPool = await axios.post('/pool/create', formData, {
         onUploadProgress: e => {
           const progress = Math.round((e.loaded * 100) / e.total!)
 
@@ -183,6 +186,8 @@ export function Form() {
           }
         }
       })
+
+      replace(`/pools/${pool.id}`)
     } catch (error) {
       console.log(error)
     }
