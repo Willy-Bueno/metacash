@@ -5,7 +5,9 @@ import { Upload } from '../upload'
 import axios from '@/helper/axios'
 import { useAuth } from '@/hooks';
 import { useRouter } from 'next/router';
-import { IPool } from '@/interfaces/db-interfaces';
+
+import { ThreeDots } from 'react-loader-spinner'
+
 
 interface File extends Blob {
   readonly lastModified: number;
@@ -61,6 +63,7 @@ export function Form() {
     'Insira o valor da meta de arrecadação da sua pool.',
     'Insira a imagem de capa da sua pool. Recomendamos o tamanho 3:1, Ex: 1200x400.',
   ]
+  const [loading, setLoading] = useState(false)
 
   function handlePrevStep() {
     if (step === 0) return
@@ -152,6 +155,7 @@ export function Form() {
 
   async function handleSubmit() {
     try {
+      setLoading(true)
       const formData = new FormData()
 
       formData.set('title', title)
@@ -164,7 +168,7 @@ export function Form() {
       formData.set('thumb', file.file! || null)
       formData.set('chainId', chainId!.toString())
 
-      const pool: IPool = await axios.post('/pool/create', formData, {
+      const { data } = await axios.post('/pool/create', formData, {
         onUploadProgress: e => {
           const progress = Math.round((e.loaded * 100) / e.total!)
 
@@ -175,7 +179,6 @@ export function Form() {
 
           if (progress === 100) {
             setTimeout(() => {
-              setStep(0)
               setTitle('')
               setAddress('')
               setStartDate('')
@@ -186,8 +189,8 @@ export function Form() {
           }
         }
       })
-
-      replace(`/pools/${pool.id}`)
+      replace(`/pools/${data.id}`)
+      setLoading(false)
     } catch (error) {
       console.log(error)
     }
@@ -227,7 +230,21 @@ export function Form() {
         <button onClick={handlePrevStep} disabled={step === 0 ? true : false}>Voltar</button>
         {
           step === formHelpers.length - 1 ? (
-            <button type='submit' disabled={disableButton(step)} className='submit' onClick={handleSubmit}>Criar</button>
+            <button type='submit' disabled={disableButton(step)} className='submit' onClick={handleSubmit}>{
+              loading ? (
+                <ThreeDots 
+                  height="20" 
+                  width="40" 
+                  radius="9"
+                  color="#FFF" 
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  visible={true}
+                 />
+              ) : (
+                'Criar'
+              )
+            }</button>
           ) : (
             <button onClick={handleNextStep} disabled={disableButton(step)}>Avançar</button>
           )
@@ -353,6 +370,9 @@ const FormFooter = styled('div', {
   gap: '10px',
 
   button: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '100px',
     height: '30px',
     background: '#000',

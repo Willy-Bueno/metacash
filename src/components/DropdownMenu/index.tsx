@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import * as Dropdown from '@radix-ui/react-dropdown-menu';
 import { styled, keyframes } from '@stitches/react';
@@ -7,11 +7,38 @@ import {
   HamburgerMenuIcon,
 } from '@radix-ui/react-icons';
 import { useAuth } from '@/hooks';
-import { useRouter } from 'next/router';
+import { IUser, IPool } from '@/interfaces/db-interfaces';
+import axios from '@/helper/axios';
+
+interface DropdownDataProps {
+  user: IUser
+  pools: IPool[]
+}
 
 export const DropdownMenu = () => {
   const { isAuthenticated, address, signin, logout } = useAuth()
-  const { asPath } = useRouter()
+  const [data, setData] = useState<DropdownDataProps>()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (address !== undefined && address !== null) {
+        axios.post('/pool/get-pool-by-id',
+        {
+          address: address
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+        )
+        .then((response) => {
+          setData(response.data)
+          console.log(response.data)
+        })
+      }
+    }
+  }, [address, isAuthenticated])
 
   function truncateAddress(address: string, length: number) {
     return address.slice(0, length) + '...' + address.slice(-length)
@@ -53,45 +80,9 @@ export const DropdownMenu = () => {
                 </DropdownItem>
                 <DropdownLabel>Navegação</DropdownLabel>
                 {
-                  asPath === '/' ? (
+                  data?.user?.role === 'admin' || !!data?.pools.length ? (
                     <>
                       <DropdownItem asChild>
-                        <Link href="/pools">
-                          Pools
-                        </Link>
-                      </DropdownItem>
-                      <DropdownItem asChild>
-                        <Link href="/dashboard">
-                          Dashboard
-                        </Link>
-                      </DropdownItem>
-                      <DropdownItem asChild>
-                        <Link href="/pools/create">
-                          Criar Pool
-                        </Link>
-                      </DropdownItem>
-                    </>
-                  ) : asPath === '/pools' ? (
-                    <>
-                      <DropdownItem asChild>
-                        <Link href="/">
-                          Home
-                        </Link>
-                      </DropdownItem>
-                      <DropdownItem asChild>
-                        <Link href="/dashboard">
-                          Dashboard
-                        </Link>
-                      </DropdownItem>
-                      <DropdownItem asChild>
-                        <Link href="/pools/create">
-                          Criar Pool
-                        </Link>
-                      </DropdownItem>
-                    </>
-                  ) : asPath === '/dashboard' ? (
-                    <>
-                      <DropdownItem>
                         <Link href="/">
                           Home
                         </Link>
@@ -102,23 +93,11 @@ export const DropdownMenu = () => {
                         </Link>
                       </DropdownItem>
                       <DropdownItem asChild>
-                        <Link href="/pools/create">
-                          Criar Pool
+                        <Link href="/dashboard">
+                          Dashboard
                         </Link>
                       </DropdownItem>
-                    </>
-                  ) : asPath === `/pools/${/\*/}` ? (
-                    <>
-                      <DropdownItem asChild>
-                        <Link href="/">
-                          Home
-                        </Link>
-                      </DropdownItem>
-                      <DropdownItem asChild>
-                        <Link href="/pools">
-                          Pools
-                        </Link>
-                      </DropdownItem>
+                      <DropdownLabel>Ações</DropdownLabel>
                       <DropdownItem asChild>
                         <Link href="/pools/create">
                           Criar Pool
@@ -138,19 +117,15 @@ export const DropdownMenu = () => {
                         </Link>
                       </DropdownItem>
                       <DropdownItem asChild>
-                        <Link href="/dashboard">
-                          Dashboard
+                        <Link href="/pools/create">
+                          Criar Pool
                         </Link>
                       </DropdownItem>
                     </>
-                  )
+                  ) 
                 }
-                <DropdownLabel>Conta</DropdownLabel>
-                <DropdownItem onClick={logOut}>
-                  Logout
-                </DropdownItem>
               </>
-            ): (
+            ) : (
               <>
                 <DropdownLabel>Conta</DropdownLabel>
                 <DropdownItem onClick={login}>

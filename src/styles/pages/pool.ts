@@ -324,6 +324,9 @@ export const TableContainer = styled('div', {
   justifyContent: 'flex-start',
   gap: '1.25rem', // 20px
   overflowX: 'scroll',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
   width: '100%',
 
   'table': {

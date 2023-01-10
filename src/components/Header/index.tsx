@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -19,11 +18,8 @@ interface HeaderDataProps {
 }
 
 export function Header() {
-  const { asPath } = useRouter()
   const { isAuthenticated, address } = useAuth()
   const { width } = useWindowSize()
-  const regex = /\/pools\/\w+/g
-  const regexRoute = regex.test(asPath)
 
   const [data, setData] = useState<HeaderDataProps>()
 
@@ -42,7 +38,6 @@ export function Header() {
         )
         .then((response) => {
           setData(response.data)
-          console.log(response.data)
         })
       }
     }

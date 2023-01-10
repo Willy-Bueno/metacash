@@ -13,6 +13,7 @@ import { IPool } from '@/interfaces/db-interfaces'
 import { useEffect, useState } from 'react'
 
 import { styled } from '@/styles/stitches.config'
+import { ThreeDots } from 'react-loader-spinner'
 
 
 interface PoolsProps {
@@ -24,8 +25,10 @@ export default function Pools({ props }: PoolsProps) {
   const [pools, setPools] = useState<IPool[]>([])
   const [take, setTake] = useState(12)
   const [skip, setSkip] = useState(6)
+  const [loading, setLoading] = useState(false)
 
   async function loadMorePools() {
+    setLoading(true)
     const { data } = await axios.get(`/pool/get-pools?take=${take}?skip=${skip}`)
 
     const newPools = data.filter((pool: IPool) => {
@@ -38,6 +41,8 @@ export default function Pools({ props }: PoolsProps) {
       setSkip(skip + 6)
       setTake(take + 6)
     }
+    
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -94,9 +99,23 @@ export default function Pools({ props }: PoolsProps) {
               }
             </PoolsGrid>
             {
-              pools.length > 6 && (
+              pools.length > 5 && (
                 <LoadMoreButton onClick={loadMorePools}>
-                  Carregar mais
+                  {
+                    loading ? (
+                      <ThreeDots 
+                        height="20" 
+                        width="40" 
+                        radius="9"
+                        color="#FFF" 
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        visible={true}
+                       />
+                    ) : (
+                      'Carregar mais'
+                    )
+                  }
                 </LoadMoreButton>
               )
             }
@@ -120,6 +139,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
 }
 
 const LoadMoreButton = styled('button', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   width: '200px',
   height: '50px',
   background: '#000',
