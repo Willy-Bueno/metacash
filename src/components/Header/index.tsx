@@ -9,13 +9,45 @@ import logo from '@/assets/logo.svg'
 import { useAuth, useWindowSize } from '@/hooks';
 import { DropdownMenu } from '../DropdownMenu';
 import { SelectNetwork } from '../SelectNetwork';
+import { useEffect, useState } from 'react';
+import axios from '@/helper/axios';
+import { IPool, IUser } from '@/interfaces/db-interfaces';
+
+interface HeaderDataProps {
+  user: IUser
+  pools: IPool[]
+}
 
 export function Header() {
   const { asPath } = useRouter()
+  const { isAuthenticated, address } = useAuth()
   const { width } = useWindowSize()
-  const { isAuthenticated } = useAuth()
   const regex = /\/pools\/\w+/g
   const regexRoute = regex.test(asPath)
+
+  const [data, setData] = useState<HeaderDataProps>()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (address !== undefined && address !== null) {
+        axios.post('/pool/get-pool-by-id',
+        {
+          address: address
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+        )
+        .then((response) => {
+          setData(response.data)
+          console.log(response.data)
+        })
+      }
+    }
+  }, [address, isAuthenticated])
+  
   
   return (
     <HeaderContainer>
@@ -30,12 +62,12 @@ export function Header() {
                   <ul>
                     <li>
                       {
-                        isAuthenticated && asPath === '/pools' ? (
+                        isAuthenticated && data?.user?.role === 'admin' || !!data?.pools.length ? (
                           <>
                             <Link href="/">
                               Home
                             </Link>
-                            <Link href="/">
+                            <Link href="/pools">
                               Pools
                             </Link>
                             <Link href="/dashboard">
@@ -44,75 +76,12 @@ export function Header() {
                           </>
                         ) : (
                           <>
-                            {
-                              isAuthenticated && asPath === '/dashboard' ? (
-                                <>
-                                  <Link href="/">
-                                    Home
-                                  </Link>
-                                  <Link href="/pools">
-                                    Pools
-                                  </Link>
-                                </>
-                              ) : (
-                                <>
-                                  {
-                                    isAuthenticated && asPath === '/' ? (
-                                      <>
-                                        <Link href="/pools">
-                                          Pools
-                                        </Link>
-                                        <Link href="/dashboard">
-                                          Dashboard
-                                        </Link>
-                                      </>
-                                    ) : isAuthenticated && asPath === '/pools/create' ? (
-                                      <>
-                                        <Link href="/">
-                                          Home
-                                        </Link>
-                                        <Link href="/pools">
-                                          Pools
-                                        </Link>
-                                        <Link href="/dashboard">
-                                          Dashboard
-                                        </Link>
-                                      </>
-                                    ) : isAuthenticated && regexRoute ? (
-                                      <>
-                                        <Link href="/">
-                                          Home
-                                        </Link>
-                                        <Link href="/pools">
-                                          Pools
-                                        </Link>
-                                        <Link href="/dashboard">
-                                          Dashboard
-                                        </Link>
-                                      </>
-                                    ) : (
-                                      <>
-                                        {
-                                          !isAuthenticated && asPath === '/' ? (
-                                            <>
-                                              <Link href="/pools">
-                                                Pools
-                                              </Link>
-                                            </>
-                                          ) : (
-                                            <>
-                                              <Link href="/">
-                                                Home
-                                              </Link>
-                                            </>
-                                          )
-                                        }
-                                      </>
-                                    )
-                                  }
-                                </>
-                              )
-                            }
+                            <Link href="/">
+                              Home
+                            </Link>
+                            <Link href="/pools">
+                              Pools
+                            </Link>
                           </>
                         )
                       }
